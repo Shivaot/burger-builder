@@ -67,6 +67,7 @@ export class BurgerBuilder extends Component {
 					/>
 				</Aux>
 			);
+			
 			orderSummary = (
 				<OrderSummary
 					price={this.props.price}

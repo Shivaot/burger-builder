@@ -8,7 +8,7 @@ import classes from "./Auth.module.css";
 import * as authActions from "../../store/actions/index";
 import { Redirect } from "react-router-dom";
 
-class Auth extends Component {
+export class Auth extends Component {
 	state = {
 		controls: {
 			email: {

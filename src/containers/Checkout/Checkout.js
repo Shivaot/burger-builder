@@ -5,12 +5,7 @@ import { connect } from 'react-redux';
 import CheckoutSummary from "../../components/Order/CheckoutSummary/CheckoutSummary";
 import ContactData from "./ContactData/ContactData";
 
-class Checkout extends Component {
-
-	// componentWillMount() {
-	// 	this.props.onPurchaseInit();
-	// 	console.log(this.props.purchased + " in will mount");	
-	// }
+export class Checkout extends Component {
 	
 	checkoutCancelledHandler = () => this.props.history.goBack();
 	checkoutContinuedHandler = () => this.props.history.replace("/checkout/contact-data");
@@ -18,8 +13,6 @@ class Checkout extends Component {
 	render() {
 		let summary = <Redirect to='/' />
 		if (this.props.ings) {
-			console.log(this.props.purchased+" in render");
-
 			const purchasedRedirect = this.props.purchased ? <Redirect to='/' /> : null;
 			summary = ( 
 				<div>
