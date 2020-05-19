@@ -1,32 +1,36 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Aux from '../../../hoc/Aux/Aux'
 import classes from './Modal.module.css';
 import BackDrop from '../Backdrop/Backdrop';
 
 
 
-class Modal extends Component {
-    shouldComponentUpdate(nextProps,nextState) {
-        return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
-    }
-    // componentWillUpdate() {
-    //     console.log('[Modal] will update');
+const Modal = props => {
+    // shouldComponentUpdate(nextProps,nextState) {
+    //     return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
     // }
-    render () {
+   
         return (
             <Aux>
-                <BackDrop show={this.props.show} clicked={this.props.modalClosed}/>
+                <BackDrop show={props.show} clicked={props.modalClosed}/>
                 <div 
                     className={classes.Modal} 
                     style={{
-                        transform: this.props.show ? 'translateY(0)' : 'translateY(-100vh)',
-                        opacity: this.props.show ? '1' : '0'
+                        transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
+                        opacity: props.show ? '1' : '0'
                     }}>
-                    {this.props.children}
+                    {props.children}
                 </div>
              </Aux>
         );
-    }
+    
 }
 
-export default Modal;   
+/**
+ * Until now we checked: should the component be updated (= re-render required)?
+ *  From now on we check the opposite: should the component be memoized (= re-render not required)?
+ */
+// shouldComponentUpdate check if they are not equal 
+// here we want to check if they ARE equal
+// it checks if prev and next props are same then return the cached/memoize component
+export default React.memo(Modal, (prevProps, nextProps) => nextProps.show === prevProps.show && nextProps.children === prevProps.children);   

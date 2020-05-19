@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { connect } from 'react-redux';
 
 import classes from "./ContactData.module.css";
@@ -9,9 +9,8 @@ import axios from '../../../axios-order';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as orderActions from '../../../store/actions/index';
 
-class ContactData extends Component {
-	state = {
-		orderForm: {
+const ContactData = props => {
+	const [orderForm, setOrderForm] = useState({
 			name: {
 				elementType: "input",
 				elementConfig: {
@@ -95,11 +94,11 @@ class ContactData extends Component {
                 validation: {},
                 valid: true
 			},
-        },
-        formIsValid: false
-    };
+		});
+	const [formIsValid, setFormIsValid] = useState(false);
+
     
-    checkValidity(value,rules) {
+    const checkValidity = (value,rules) => {
         let isValid = true;
         if (rules.required) {
             isValid = value.trim() !== '' && isValid;
@@ -122,45 +121,45 @@ class ContactData extends Component {
         return isValid;
     }
 
-    inputChangedHandler = (event,inputId) => {
-        const updatedOrderForm = {...this.state.orderForm};
+    const inputChangedHandler = (event,inputId) => {
+        const updatedOrderForm = {...orderForm};
         const updatedOrderFormElement = {...updatedOrderForm[inputId]}; // deep copying
         updatedOrderFormElement.value = event.target.value;
-        updatedOrderFormElement.valid = this.checkValidity(updatedOrderFormElement.value,updatedOrderFormElement.validation);
+        updatedOrderFormElement.valid = checkValidity(updatedOrderFormElement.value,updatedOrderFormElement.validation);
         updatedOrderFormElement.touched = true;
         updatedOrderForm[inputId] = updatedOrderFormElement;   
         let formIsValid = true;
         for (let key in updatedOrderForm) {
             formIsValid = updatedOrderForm[key].valid && formIsValid;
-        }     
-        this.setState({orderForm: updatedOrderForm,formIsValid: formIsValid});
+		}  
+		setOrderForm(updatedOrderForm);
+		setFormIsValid(formIsValid);   
     }
 
-	orderHandler = (event) => {
+	const orderHandler = (event) => {
 		event.preventDefault();
         const formData = {};
-        for (let key in this.state.orderForm) {
-            formData[key] = this.state.orderForm[key].value; 
+        for (let key in orderForm) {
+            formData[key] = orderForm[key].value; 
         }
 		const order = {
-			ingredients: this.props.ings,
-			price: this.props.price,
+			ingredients: props.ings,
+			price: props.price,
 			orderData: formData,
-			userId: this.props.userId
+			userId: props.userId
 		};
-		this.props.onOrderBurger(order,this.props.token);
+		props.onOrderBurger(order,props.token);
 	};
 	
-	render() {
 		let formElementsArray = [];
-		for (let key in this.state.orderForm) {
+		for (let key in orderForm) {
 			formElementsArray.push({
 				key: key,
-				config: this.state.orderForm[key],
+				config: orderForm[key],
 			});
 		}
 		let form = (
-			<form onSubmit={this.orderHandler}>
+			<form onSubmit={orderHandler}>
 				{formElementsArray.map((formElement) => (
 					<Input
 						key={formElement.key}
@@ -170,15 +169,15 @@ class ContactData extends Component {
                         inValid={!formElement.config.valid}
                         shouldValidate={formElement.config.validation}
                         touched={formElement.config.touched}
-                        changed={(event) => this.inputChangedHandler(event,formElement.key)}
+                        changed={(event) => inputChangedHandler(event,formElement.key)}
 					/>
 				))}
-				<Button btnType="Success" disabled={!this.state.formIsValid}>
+				<Button btnType="Success" disabled={!formIsValid}>
 					ORDER
 				</Button>
 			</form>
 		);
-		if (this.props.loading) {
+		if (props.loading) {
 			form = <Spinner />;
 		}
 		return (
@@ -187,7 +186,7 @@ class ContactData extends Component {
 				{form}
 			</div>
 		);
-	}
+	
 }
 
 const mapStateToProps = state => {
